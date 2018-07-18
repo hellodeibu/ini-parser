@@ -1,18 +1,28 @@
 /**
- * Attempts to parse a string value with `JSON.parse`. If unsuccessful,
+ * Attempts to figure out what type the value is and parses it accordingly.
+ * Resorts to `JSON.parse` if unable to figure out. If this is unsuccessful,
  * returns input string untouched.
  */
 export function parseValue(value?: string) {
+	let trues: string[] = [ 'true', 'yes', 'on' ]
+	let falses: string[] = [ 'false', 'no', 'off' ]
+
 	if (!value) {
 		return value
-	}
-	if (value[0] === '"') {
+	} else if (value[0] === '"') {
 		return value
-	}
-	try {
-		return JSON.parse(value)
-	} catch {
-		return value
+	} else if (parseInt(value, 10).toString() === value) {
+		return parseInt(value, 10)
+	} else if (trues.indexOf(value.toLowerCase()) > -1) {
+		return true
+	} else if (falses.indexOf(value.toLowerCase()) > -1) {
+		return false
+	} else {
+		try {
+			return JSON.parse(value)
+		} catch {
+			return value
+		}
 	}
 }
 
